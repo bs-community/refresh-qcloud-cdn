@@ -5,7 +5,9 @@ use Illuminate\Contracts\Events\Dispatcher;
 return function (Dispatcher $events) {
     $events->listen(App\Events\PlayerProfileUpdated::class, function ($event) {
         $name = $event->player->player_name;
-        $url = env('QCLOUD_CDN_BASE_URL') . "/$name.json";
+        $url[0] = env('QCLOUD_CDN_BASE_URL') . "/$name.json";
+        $url[1] = env('QCLOUD_CDN_BASE_URL') . "/csl/$name.json";
+        $url[2] = env('QCLOUD_CDN_BASE_URL') . "/usm/$name.json";
 
         $secretKey = env('QCLOUD_CDN_SECRET_KEY');
         $secretId = env('QCLOUD_CDN_SECRET_ID');
@@ -15,7 +17,9 @@ return function (Dispatcher $events) {
             'Timestamp' => time(NULL),
             'Action' => 'RefreshCdnUrl',
             'SecretId' => $secretId,
-            'urls.0' => $url,
+            'urls.0' => $url[0],
+            'urls.1' => $url[1],
+            'urls.2' => $url[2],
         ];
         ksort($apiBody);
 
